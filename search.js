@@ -1,7 +1,6 @@
 //function search contacts
-var btnSearch = document.getElementById('btnSearch');
 
-  btnSearch.addEventListener('click', function() {
+function searchInput() {
 
       var input, filter, table, tr, td, i;
       input = document.getElementById("searchInput");
@@ -18,4 +17,4 @@ var btnSearch = document.getElementById('btnSearch');
           }
         }
       }
-  });
+}

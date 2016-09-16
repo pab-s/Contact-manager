@@ -26,12 +26,14 @@
 
       <div class="tab-content">
 
+
+
         <!--  //////// Home ////// -->
         <div id="section1" class="col-sm-9 tab-pane fade in active">
           <h4>Home</h4>
           <hr>
           <div class="input-group">
-            <input id="searchInput" type="text" class="form-control" placeholder="Search..">
+            <input id="searchInput" onkeyup="searchInput()" type="text" class="form-control" placeholder="Search..">
             <span class="input-group-btn">
               <button class="btn btn-default" type="button">
                 <span id="btnSearch" class="glyphicon glyphicon-search"></span>
@@ -40,7 +42,9 @@
           </div>
 
 
-          <table id="tableSearch" class="table table-striped">
+
+          <!--  //////// search Contact ////// -->
+          <table id="tableSearch" class="table">
             <thead>
               <th>
                 Contact Name
@@ -55,8 +59,9 @@
             <tbody></tbody>
           </table>
 
-
         </div>
+
+
 
         <!--  //////// Add Contact ////// -->
         <div id="section2" class="col-sm-9 tab-pane fade">
@@ -79,18 +84,37 @@
         </div>
 
 
+
+
         <!--  //////// Edit Contact ////// -->
         <div id="section3" class="col-sm-9 tab-pane fade">
           <h4>Edit Contact</</h4>
           <hr>
+          <table id="tableEdit" class="table">
+            <thead>
+              <th>
+                Contact Name
+              </th>
+              <th>
+                Phone
+              </th>
+              <th>
+                Email
+              </th>
+            </thead>
+            <tbody></tbody>
+          </table>
+
 
         </div>
+
+
 
         <!--  //////// Delete Contact ////// -->
         <div id="section4" class="col-sm-9 tab-pane fade">
           <h4>Delete Contact</</h4>
           <hr>
-          <table id="tableDelete" class="table table-striped">
+          <table id="tableDelete" class="table table-sm">
             <thead>
               <th>
                 Contact Name

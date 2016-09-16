@@ -9,6 +9,8 @@ var btnDelete = document.getElementById('btnDelete');
 // tables
 var tableSearch = document.getElementById('tableSearch');
 var tableDelete = document.getElementById('tableDelete');
+var tableEdit = document.getElementById('tableEdit');
+
 
 var arrayContact = [];
 var check;
@@ -28,6 +30,7 @@ function updateContact() {
     console.log(arrayContact[i]);
     createRow(tableSearch, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email);
     deleteTable(tableDelete, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email);
+    createRow(tableEdit, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email);
   }
 }
 
