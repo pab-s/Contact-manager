@@ -3,14 +3,15 @@ var inputName = document.getElementById('inputName');
 var inputPhone = document.getElementById('inputPhone');
 var inputEmail = document.getElementById('inputEmail');
 
+// buttons
 var btnAdd = document.getElementById('btnAdd');
 var btnDelete = document.getElementById('btnDelete');
+var btnSave = document.getElementById('btnSave');
 
 // tables
 var tableSearch = document.getElementById('tableSearch');
 var tableDelete = document.getElementById('tableDelete');
 var tableEdit = document.getElementById('tableEdit');
-
 
 var arrayContact = [];
 var check;
@@ -20,30 +21,27 @@ var myStorage = localStorage;
 var contactNum = myStorage.length;
 var xhr = new XMLHttpRequest();
 
-function updateContact() {
+// gets item from local storage and updates contacs array and re creates tables
+function downloadContact() {
 
   for (var i = 0; i < myStorage.length; i++) {
     var newItem = myStorage.getItem(i);
     newItem = JSON.parse(newItem);
-    console.log(newItem, myStorage);
     arrayContact[i] = newItem;
-    console.log(arrayContact[i]);
     createRow(tableSearch, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email);
     deleteTable(tableDelete, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email);
-    createRow(tableEdit, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email);
+    createEdit(tableEdit, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email);
   }
 }
 
 //convert object contact to JSON string and storage it
-function arrToStr(key, value) {
+function uploadContact(key, value) {
   var contactStr = JSON.stringify(value);
   myStorage.setItem(key, contactStr);
-  console.log("JSON = " + contactStr);
 }
 
 // object constructor
 function contact(name, phone, email, id) {
-  this.id = id;
   this.name = name;
   this.phone = phone;
   this.email = email;
@@ -53,36 +51,33 @@ function contact(name, phone, email, id) {
     var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November","December"];
     return days[userDate.getDay()] + " " + month[userDate.getMonth()] + " " + userDate.getFullYear();
   };
-  this.delete = false;
 };
 
-//input listener
-btnAdd.addEventListener('click', function() {
-  if(inputName.value != "" || inputPhone.value != "" || inputEmail.value != "") {
 
-      inputName = inputName.value;
-      inputPhone = inputPhone.value;
-      inputEmail = inputEmail.value;
+//create edit table
+function createEdit(tableName, num, name, phone, email) {
+  //create the row and add data
+  var tr = document.createElement('tr');
+  var td = tr.appendChild(document.createElement('td'));
+  td.setAttribute("id", "name");
+  td.innerHTML = name;
+  td.setAttribute("contenteditable", "true");
 
-      var newContact = new contact(inputName, inputPhone, inputEmail, contactNum);
-      arrayContact[contactNum] = newContact;
+  tableName.appendChild(tr);
+  var td = tr.appendChild(document.createElement('td'));
+  td.setAttribute("id", "phone");
+  td.innerHTML = phone;
+  td.setAttribute("contenteditable", "true");
 
-      //log the new contact
-      arrayContact[contactNum].date = arrayContact[contactNum].date();
-      console.log(arrayContact[contactNum].date);
-      arrToStr(contactNum, arrayContact[contactNum]);
+  tableName.appendChild(tr);
+  var td = tr.appendChild(document.createElement('td'));
+  td.setAttribute("id", "email");
+  td.innerHTML = email;
+  td.setAttribute("contenteditable", "true");
 
-      //change contact num and resets input box;
-      contactNum += 1;
+  tableName.appendChild(tr);
+}
 
-      inputName = ' ';
-      inputPhone.value;
-      inputEmail.value;
-  } else {
-    alert("try again");
-  }
-});
-// create rows and checkbox listener
 function createRow(tableName, num, name, phone, email) {
   //create the row and add data
   var tr = document.createElement('tr');
@@ -108,6 +103,9 @@ function deleteTable(tableName, num, name, phone, email) {
     //create the row and add data
     var tr = document.createElement('tr');
     var td = tr.appendChild(document.createElement('td'));
+    td.appendChild(checkbox);
+
+    var td = tr.appendChild(document.createElement('td'));
     td.innerHTML = name;
     tableName.appendChild(tr);
     var td = tr.appendChild(document.createElement('td'));
@@ -116,39 +114,92 @@ function deleteTable(tableName, num, name, phone, email) {
     var td = tr.appendChild(document.createElement('td'));
     td.innerHTML = email;
     tableName.appendChild(tr);
-    //create row
-    var td = tr.appendChild(document.createElement('td'));
-    // add checkbox;
-    td.appendChild(checkbox);
-    // calls checkbox listener
-    callListener(checkbox, arrayContact[num].delete, num);
+
 }
 
-// see if checkbox is clicked and updates contact
-function callListener(checkName, comp, num) {
-    checkName.addEventListener('click', function() {
-    comp = !comp;
-    arrayContact[num].delete = comp;
-//    console.log(arrayContact[num].name + ' delete: ' + arrayContact[num].delete);
-  });
-}
 
 
 function resetContact() {
     for (var i = 0; i < arrayContact.length; i++) {
-      arrToStr(i, arrayContact[i]);
+      uploadContact(i, arrayContact[i]);
     }
 };
 
+//input listener
+btnAdd.addEventListener('click', function(e) {
+
+  var validEmail = /\S+@\S+\.\S+/;
+  var validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/;
+  var validName = /\D/ ;
+
+
+
+  if(validName.test(inputName.value) && validPhone.test(inputPhone.value) && validEmail.test(inputEmail.value)) {
+
+    var newContact = new contact(inputName.value, inputPhone.value, inputEmail.value, contactNum);
+    arrayContact[contactNum] = newContact;
+
+    //log the new contact
+    arrayContact[contactNum].date = arrayContact[contactNum].date();
+    uploadContact(contactNum, arrayContact[contactNum]);
+
+    //change contact num and resets input box;
+    contactNum += 1;
+
+
+  } else {
+    e.preventDefault();
+
+    var pop = document.getElementById('modalPop');
+
+    pop.modal('show');
+
+    var msgName = "";
+    var msgPhone = "";
+    var msgEmail = "";
+    var finalMsg;
+
+    if(!validName.test(inputName.value)) {
+      msgName = "name is wrong";
+    }
+    if(!validPhone.test(inputPhone.value)) {
+      msgPhone = "phone is wrong";
+    }
+    if(!validEmail.test(inputEmail.value)) {
+      msgEmail = "email is wrong";
+    }
+
+    finalMsg = "Try again!" + '\n' + msgName + '\n' + msgPhone + '\n' + msgEmail;
+    console.log(finalMsg);
+
+  }
+});
+
 btnDelete.addEventListener('click', function() {
-  for (var i = 0; i < arrayContact.length; i++) {
-    if (arrayContact[i].delete) {
-      console.log("delete " + arrayContact[i]);
-      arrayContact.splice(i, 1);
-       localStorage.clear();
+  var allCheckBoxes = tableDelete.querySelectorAll('input');
+  for (var i = allCheckBoxes.length; i > 0; i--) {
+    if (allCheckBoxes[i-1].checked) {
+      arrayContact.splice(i-1, 1);
     }
   }
+  localStorage.clear();
   resetContact();
 });
 
-window.onload = updateContact();
+btnSave.addEventListener('click', function(e) {
+  var nameX;
+  var dataX;
+  var data = tableEdit.querySelectorAll('tr');
+
+    for (var i = 0; i < data.length; i++) {
+      for (var j = 0; j < data[i].children.length; j++) {
+        nameX = data[i].children[j].id;
+        dataX = data[i].children[j].innerHTML;
+        arrayContact[i][nameX] = dataX;8
+    }
+  }
+  localStorage.clear();
+  resetContact();
+});
+
+window.onload = downloadContact();
