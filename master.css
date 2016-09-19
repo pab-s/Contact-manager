@@ -9,6 +9,16 @@
     height: 1000px;
   }
 
+  .navbar-toggle {
+      background-color: white;
+      border: solid 1px black;
+      margin-top: -39px;
+      padding: 7px 10px;
+  }
+  .icon-bar{
+      color: black;
+
+  }
   /* Set black background color, white text and some padding */
   footer {
     background-color: #555;
