@@ -2,6 +2,7 @@
 var inputName = document.getElementById('inputName');
 var inputPhone = document.getElementById('inputPhone');
 var inputEmail = document.getElementById('inputEmail');
+var feedback = document.getElementById('feedback');
 
 // buttons
 var btnAdd = document.getElementById('btnAdd');
@@ -149,10 +150,7 @@ btnAdd.addEventListener('click', function(e) {
 
   } else {
     e.preventDefault();
-
-    var pop = document.getElementById('modalPop');
-
-    pop.modal('show');
+    $('#modalPop').modal('show')
 
     var msgName = "";
     var msgPhone = "";
@@ -169,9 +167,8 @@ btnAdd.addEventListener('click', function(e) {
       msgEmail = "email is wrong";
     }
 
-    finalMsg = "Try again!" + '\n' + msgName + '\n' + msgPhone + '\n' + msgEmail;
-    console.log(finalMsg);
-
+    finalMsg = msgName + '<br>' + msgPhone + '<br>' + msgEmail;
+    feedback.innerHTML = finalMsg;
   }
 });
 

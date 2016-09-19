@@ -1,3 +1,9 @@
+.table {
+  font-size: 14px;
+}
+body {
+  margin-top: 10px;
+}
 /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
   .row.content {
     height: 100%
@@ -5,24 +11,27 @@
 
   /* Set gray background color and 100% height */
   .sidenav {
-    background-color: #f1f1f1;
+    background-color: #1c1e22;
     height: 1000px;
   }
 
   .navbar-toggle {
-      background-color: white;
       border: solid 1px black;
       margin-top: -39px;
       padding: 7px 10px;
   }
-  .icon-bar{
-      color: black;
-
+  hr {
+    border-color: grey;
   }
+  .head-color {
+    background-image: linear-gradient(#020202, #101112 40%, #141618);
+    background-repeat: no-repeat;
+  }
+
   /* Set black background color, white text and some padding */
   footer {
-    background-color: #555;
-    color: white;
+    background-image: linear-gradient(#020202, #101112 40%, #141618);
+    background-repeat: no-repeat;
     padding: 15px;
     position: fixed;
     height: 50px;
@@ -37,4 +46,7 @@
       padding: 15px;
     }
     .row.content {height: auto;}
+    .hidden-md-down {
+      display: none;
+    }
   }
