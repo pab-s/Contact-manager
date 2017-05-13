@@ -21,15 +21,6 @@ var arrayContact = []
 var myStorage = localStorage
 var contactNum = myStorage.length
 
-// gets users data from local storage and returns an array of objects
-function downloadContact (storage) {
-  let arr = []
-  for (var item in storage) {
-    arr.push(JSON.parse(storage[item]))
-  }
-  return arr
-}
-
 // convert object contact to JSON string and storage it
 function uploadContact (key, value) {
   var contactStr = JSON.stringify(value)
@@ -48,31 +39,6 @@ function Contact (name, phone, email, id) {
     return days[userDate.getDay()] + ' ' + month[userDate.getMonth()] + ' ' + userDate.getFullYear()
   }
 };
-
-
-// create edit table
-function createEdit (tableName, num, name, phone, email) {
-  // create the row and add data
-  var tr = document.createElement('tr')
-  var td = tr.appendChild(document.createElement('td'))
-  td.setAttribute('id', 'name')
-  td.innerHTML = name
-  td.setAttribute('contenteditable', 'true')
-
-  tableName.appendChild(tr)
-  var td = tr.appendChild(document.createElement('td'))
-  td.setAttribute('id', 'phone')
-  td.innerHTML = phone
-  td.setAttribute('contenteditable', 'true')
-
-  tableName.appendChild(tr)
-  var td = tr.appendChild(document.createElement('td'))
-  td.setAttribute('id', 'email')
-  td.innerHTML = email
-  td.setAttribute('contenteditable', 'true')
-
-  tableName.appendChild(tr)
-}
 
 function deleteTable (tableName, num, name, phone, email) {
   // create the checkbox
@@ -172,8 +138,18 @@ btnSave.addEventListener('click', function (e) {
 
 // window.onload
 
-function getUserRow (obj) {
-  // create the row and add data
+// ------------------------------------------ //
+
+// gets users data from local storage and returns an array of objects
+function downloadContact (storage) {
+  let arr = []
+  for (var item in storage) {
+    arr.push(JSON.parse(storage[item]))
+  }
+  return arr
+}
+
+function getTableRowUser (obj) {
   return '<tr>' +
     '<td>' + obj['name'] + '</td>' +
     '<td>' + obj['phone'] + '</td>' +
@@ -181,9 +157,16 @@ function getUserRow (obj) {
     '</tr>'
 }
 
-let usersArr = downloadContact(localStorage)
-
-tableSearch.innerHTML = usersArr.reduce((acc, user) => {
-  acc += getUserRow(user)
+let table = downloadContact(localStorage).reduce((acc, user) => {
+  acc += getTableRowUser(user)
   return acc
 }, '')
+
+function enableEdit (e) {
+  e.target.contentEditable = true
+}
+
+tableSearch.innerHTML = table
+tableEdit.innerHTML = table
+
+tableEdit.addEventListener('click', enableEdit)
