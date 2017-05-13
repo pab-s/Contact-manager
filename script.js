@@ -1,8 +1,4 @@
 /* global localStorage, $ */
-// inputs
-var inputName = document.getElementById('inputName')
-var inputPhone = document.getElementById('inputPhone')
-var inputEmail = document.getElementById('inputEmail')
 var feedback = document.getElementById('feedback')
 
 // buttons
@@ -34,40 +30,43 @@ function Contact (name, phone, email) {
 };
 
 function addContact (e) {
-  var validEmail = /\S+@\S+\.\S+/
-  var validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\]{0,1}[0-9]{3}[-\s\]{0,1}[0-9]{4}$/
-  var validName = /\D/
-
-  if (validName.test(inputName.value) && validPhone.test(inputPhone.value) && validEmail.test(inputEmail.value)) {
-    var newContact = new Contact(inputName.value, inputPhone.value, inputEmail.value)
-    arrayContact.push(newContact)
-    updateContactStorage(arrayContact)
-  } else {
-    e.preventDefault()
-    var str = ''
-    if (!validName.test(inputName.value)) str += 'name is wrong <br>'
-    if (!validPhone.test(inputPhone.value)) str += 'phone is wrong <br>'
-    if (!validEmail.test(inputEmail.value)) str += 'email is wrong <br>'
-    feedback.innerHTML = str
-    $('#modalPop').modal('show')
+  e.preventDefault()
+  let form = document.querySelector('#section2 form')
+  for (let i = 0; i < form.elements.length; i++) {
+    console.log(form.elements[i].value)
   }
+
+  // TODO: finish the regex test and update arrayContact
+
+  // var validEmail = /\S+@\S+\.\S+/
+  // var validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\]{0,1}[0-9]{3}[-\s\]{0,1}[0-9]{4}$/
+  // var validName = /\D/
+
+  // if (validName.test(inputName.value) && validPhone.test(inputPhone.value) && validEmail.test(inputEmail.value)) {
+  //   var newContact = new Contact(inputName.value, inputPhone.value, inputEmail.value)
+  //   arrayContact.push(newContact)
+  //   updateContactStorage(arrayContact)
+  // } else {
+  //   e.preventDefault()
+  //   var str = ''
+  //   if (!validName.test(inputName.value)) str += 'name is wrong <br>'
+  //   if (!validPhone.test(inputPhone.value)) str += 'phone is wrong <br>'
+  //   if (!validEmail.test(inputEmail.value)) str += 'email is wrong <br>'
+  //   feedback.innerHTML = str
+  //   $('#modalPop').modal('show')
+  // }
 }
 
-function saveEdit () {
-  // var nameX
-  // var dataX
-  // var data = tableEdit.querySelectorAll('tr')
-  //
-  // for (var i = 0; i < data.length; i++) {
-  //   for (var j = 0; j < data[i].children.length; j++) {
-  //     nameX = data[i].children[j].id
-  //     dataX = data[i].children[j].innerHTML
-  //     arrayContact[i][nameX] = dataX; 8
-  //   }
-  // }
-  // localStorage.clear()
-  // resetContact()
+function saveEdit (e) {
+  e.preventDefault()
+  var tableRowData = tableEdit.querySelectorAll('tr')
 
+  for (let i = 0; i < tableRowData.length; i++) {
+    console.log(tableRowData[i].cells[0].innerText)
+    console.log(tableRowData[i].cells[1].innerText)
+    console.log(tableRowData[i].cells[2].innerText)
+  }
+  // // TODO: update array and localStorage
 }
 
 // convert object contact to JSON string and storage it
