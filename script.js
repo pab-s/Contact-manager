@@ -40,29 +40,6 @@ function Contact (name, phone, email, id) {
   }
 };
 
-function deleteTable (tableName, num, name, phone, email) {
-  // create the checkbox
-  var checkbox = document.createElement('input')
-  checkbox.type = 'checkbox'
-  checkbox.id = 'check' + num
-  checkbox.checked = arrayContact[num].delete
-
-    // create the row and add data
-  var tr = document.createElement('tr')
-  var td = tr.appendChild(document.createElement('td'))
-  td.appendChild(checkbox)
-
-  var td = tr.appendChild(document.createElement('td'))
-  td.innerHTML = name
-  tableName.appendChild(tr)
-  var td = tr.appendChild(document.createElement('td'))
-  td.innerHTML = phone
-  tableName.appendChild(tr)
-  var td = tr.appendChild(document.createElement('td'))
-  td.innerHTML = email
-  tableName.appendChild(tr)
-}
-
 function resetContact () {
   for (var i = 0; i < arrayContact.length; i++) {
     uploadContact(i, arrayContact[i])
@@ -140,6 +117,9 @@ btnSave.addEventListener('click', function (e) {
 
 // ------------------------------------------ //
 
+let usersArr = downloadContact(localStorage)
+let checkbox = '<input type="checkbox" id="check1">'
+
 // gets users data from local storage and returns an array of objects
 function downloadContact (storage) {
   let arr = []
@@ -149,24 +129,32 @@ function downloadContact (storage) {
   return arr
 }
 
-function getTableRowUser (obj) {
-  return '<tr>' +
-    '<td>' + obj['name'] + '</td>' +
+function getTableRowUser (obj, checkbox) {
+  let row = '<tr>'
+  if (checkbox) row += '<td>' + checkbox + '</td>'
+  row += '<td>' + obj['name'] + '</td>' +
     '<td>' + obj['phone'] + '</td>' +
     '<td>' + obj['email'] + '</td>' +
     '</tr>'
+  return row
 }
-
-let table = downloadContact(localStorage).reduce((acc, user) => {
-  acc += getTableRowUser(user)
-  return acc
-}, '')
 
 function enableEdit (e) {
   e.target.contentEditable = true
 }
 
+let table = usersArr.reduce((acc, user) => {
+  acc += getTableRowUser(user)
+  return acc
+}, '')
+
+let tableCheckbox = usersArr.reduce((acc, user) => {
+  acc += getTableRowUser(user, checkbox)
+  return acc
+}, '')
+
 tableSearch.innerHTML = table
 tableEdit.innerHTML = table
+tableDelete.innerHTML = tableCheckbox
 
 tableEdit.addEventListener('click', enableEdit)
