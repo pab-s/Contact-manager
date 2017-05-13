@@ -20,18 +20,14 @@ var arrayContact = []
 // local storage setup
 var myStorage = localStorage
 var contactNum = myStorage.length
-// var xhr = new XMLHttpRequest()
 
-// gets item from local storage and updates contacs array and re creates tables
-function downloadContact () {
-  for (var i = 0; i < myStorage.length; i++) {
-    var newItem = myStorage.getItem(i)
-    newItem = JSON.parse(newItem)
-    arrayContact[i] = newItem
-    createRow(tableSearch, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email)
-    deleteTable(tableDelete, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email)
-    createEdit(tableEdit, i, arrayContact[i].name, arrayContact[i].phone, arrayContact[i].email)
+// gets users data from local storage and returns an array of objects
+function downloadContact (storage) {
+  let arr = []
+  for (var item in storage) {
+    arr.push(JSON.parse(storage[item]))
   }
+  return arr
 }
 
 // convert object contact to JSON string and storage it
@@ -41,7 +37,7 @@ function uploadContact (key, value) {
 }
 
 // object constructor
-function contact (name, phone, email, id) {
+function Contact (name, phone, email, id) {
   this.name = name
   this.phone = phone
   this.email = email
@@ -52,6 +48,7 @@ function contact (name, phone, email, id) {
     return days[userDate.getDay()] + ' ' + month[userDate.getMonth()] + ' ' + userDate.getFullYear()
   }
 };
+
 
 // create edit table
 function createEdit (tableName, num, name, phone, email) {
@@ -74,20 +71,6 @@ function createEdit (tableName, num, name, phone, email) {
   td.innerHTML = email
   td.setAttribute('contenteditable', 'true')
 
-  tableName.appendChild(tr)
-}
-
-function createRow (tableName, num, name, phone, email) {
-  // create the row and add data
-  var tr = document.createElement('tr')
-  var td = tr.appendChild(document.createElement('td'))
-  td.innerHTML = name
-  tableName.appendChild(tr)
-  var td = tr.appendChild(document.createElement('td'))
-  td.innerHTML = phone
-  tableName.appendChild(tr)
-  var td = tr.appendChild(document.createElement('td'))
-  td.innerHTML = email
   tableName.appendChild(tr)
 }
 
@@ -127,7 +110,7 @@ btnAdd.addEventListener('click', function (e) {
   var validName = /\D/
 
   if (validName.test(inputName.value) && validPhone.test(inputPhone.value) && validEmail.test(inputEmail.value)) {
-    var newContact = new contact(inputName.value, inputPhone.value, inputEmail.value, contactNum)
+    var newContact = new Contact(inputName.value, inputPhone.value, inputEmail.value, contactNum)
     arrayContact[contactNum] = newContact
 
     // log the new contact
@@ -187,4 +170,20 @@ btnSave.addEventListener('click', function (e) {
   resetContact()
 })
 
-window.onload = downloadContact()
+// window.onload
+
+function getUserRow (obj) {
+  // create the row and add data
+  return '<tr>' +
+    '<td>' + obj['name'] + '</td>' +
+    '<td>' + obj['phone'] + '</td>' +
+    '<td>' + obj['email'] + '</td>' +
+    '</tr>'
+}
+
+let usersArr = downloadContact(localStorage)
+
+tableSearch.innerHTML = usersArr.reduce((acc, user) => {
+  acc += getUserRow(user)
+  return acc
+}, '')
