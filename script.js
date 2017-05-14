@@ -1,5 +1,6 @@
 /* global localStorage, $ */
-var feedback = document.getElementById('feedback')
+let feedback = document.getElementById('feedback')
+let feedTitle = document.getElementById('feedback-title')
 
 // buttons
 var btnAddContact = document.getElementById('btnAdd')
@@ -9,6 +10,12 @@ var btnSaveEdit = document.getElementById('btnSave')
 var tableSearch = document.getElementById('tableSearch')
 var tableDelete = document.getElementById('tableDelete')
 var tableEdit = document.getElementById('tableEdit')
+let formAddContact = document.querySelector('#section2 form')
+
+// regExp
+const validEmail = /\S+@\S+\.\S+/
+const validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/
+const validName = /\D/
 
 // local storage setup
 var myStorage = localStorage
@@ -31,32 +38,35 @@ function Contact (name, phone, email) {
 
 function addContact (e) {
   e.preventDefault()
-  let form = document.querySelector('#section2 form')
-  let inputName = form.elements[0].value
-  let inputPhone = form.elements[1].value
-  let inputEmail = form.elements[2].value
-  console.log(inputName, inputPhone, inputEmail)
-
-  var validEmail = /\S+@\S+\.\S+/
-  var validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/
-  var validName = /\D/
+  let inputName = formAddContact.elements[0].value
+  let inputPhone = formAddContact.elements[1].value
+  let inputEmail = formAddContact.elements[2].value
 
   if (validName.test(inputName) && validPhone.test(inputPhone) && validEmail.test(inputEmail)) {
-    let newContact = new Contact(inputName, inputPhone, inputEmail)
-    arrayContact.push(newContact)
+    arrayContact.push(new Contact(inputName, inputPhone, inputEmail))
     updateContactStorage(arrayContact)
     updateAllTables()
-    feedback.innerHTML = `contact ${inputName} added`
-    $('#modalPop').modal('show')
+    resetInputValue()
+    showModal('Done!', `The contact ${inputName} was added successfully`)
   } else {
-    e.preventDefault()
-    var str = ''
-    if (!validName.test(inputName)) str += 'name is wrong <br>'
-    if (!validPhone.test(inputPhone)) str += 'phone is wrong <br>'
-    if (!validEmail.test(inputEmail)) str += 'email is wrong <br>'
-    feedback.innerHTML = str
-    $('#modalPop').modal('show')
+    var message = ''
+    if (!validName.test(inputName)) message += 'name is wrong <br>'
+    if (!validPhone.test(inputPhone)) message += 'phone is wrong <br>'
+    if (!validEmail.test(inputEmail)) message += 'email is wrong <br>'
+    showModal('Try again!', message)
   }
+}
+
+function showModal (title, body) {
+  feedTitle.innerHTML = title
+  feedback.innerHTML = body
+  $('#modalPop').modal('show')
+}
+
+function resetInputValue () {
+  formAddContact.elements[0].value = ''
+  formAddContact.elements[1].value = ''
+  formAddContact.elements[2].value = ''
 }
 
 function saveEdit (e) {
