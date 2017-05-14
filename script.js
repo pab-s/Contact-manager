@@ -32,29 +32,31 @@ function Contact (name, phone, email) {
 function addContact (e) {
   e.preventDefault()
   let form = document.querySelector('#section2 form')
-  for (let i = 0; i < form.elements.length; i++) {
-    console.log(form.elements[i].value)
+  let inputName = form.elements[0].value
+  let inputPhone = form.elements[1].value
+  let inputEmail = form.elements[2].value
+  console.log(inputName, inputPhone, inputEmail)
+
+  var validEmail = /\S+@\S+\.\S+/
+  var validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/
+  var validName = /\D/
+
+  if (validName.test(inputName) && validPhone.test(inputPhone) && validEmail.test(inputEmail)) {
+    let newContact = new Contact(inputName, inputPhone, inputEmail)
+    arrayContact.push(newContact)
+    updateContactStorage(arrayContact)
+    updateAllTables()
+    feedback.innerHTML = `contact ${inputName} added`
+    $('#modalPop').modal('show')
+  } else {
+    e.preventDefault()
+    var str = ''
+    if (!validName.test(inputName)) str += 'name is wrong <br>'
+    if (!validPhone.test(inputPhone)) str += 'phone is wrong <br>'
+    if (!validEmail.test(inputEmail)) str += 'email is wrong <br>'
+    feedback.innerHTML = str
+    $('#modalPop').modal('show')
   }
-
-  // TODO: finish the regex test and update arrayContact
-
-  // var validEmail = /\S+@\S+\.\S+/
-  // var validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\]{0,1}[0-9]{3}[-\s\]{0,1}[0-9]{4}$/
-  // var validName = /\D/
-
-  // if (validName.test(inputName.value) && validPhone.test(inputPhone.value) && validEmail.test(inputEmail.value)) {
-  //   var newContact = new Contact(inputName.value, inputPhone.value, inputEmail.value)
-  //   arrayContact.push(newContact)
-  //   updateContactStorage(arrayContact)
-  // } else {
-  //   e.preventDefault()
-  //   var str = ''
-  //   if (!validName.test(inputName.value)) str += 'name is wrong <br>'
-  //   if (!validPhone.test(inputPhone.value)) str += 'phone is wrong <br>'
-  //   if (!validEmail.test(inputEmail.value)) str += 'email is wrong <br>'
-  //   feedback.innerHTML = str
-  //   $('#modalPop').modal('show')
-  // }
 }
 
 function saveEdit (e) {
@@ -96,30 +98,32 @@ function getTableRowUser (obj, checkbox, index) {
   return row
 }
 
-function enableEdit (e) {
-  e.target.contentEditable = true
-}
-
-let mainTable = arrayContact.reduce((acc, user) => {
-  acc += getTableRowUser(user)
-  return acc
-}, '')
-
-let tableCheckbox = arrayContact.reduce((acc, user, index) => {
-  acc += getTableRowUser(user, isCheckbox, index)
-  return acc
-}, '')
-
 function checkboxHandler (e) {
   if (e.target.type === 'checkbox' && e.target.checked) {
     console.log(e.target.value)
   }
 }
 
-// update DOM tables
-tableSearch.innerHTML = mainTable
-tableEdit.innerHTML = mainTable
-tableDelete.innerHTML = tableCheckbox
+function enableEdit (e) {
+  e.target.contentEditable = true
+}
+
+function getMainTable (acc, user) {
+  acc += getTableRowUser(user)
+  return acc
+}
+
+function getCheckboxTable (acc, user, index) {
+  acc += getTableRowUser(user, isCheckbox, index)
+  return acc
+}
+
+function updateAllTables () {
+  let mainTable = arrayContact.reduce(getMainTable, '')
+  tableSearch.innerHTML = mainTable
+  tableEdit.innerHTML = mainTable
+  tableDelete.innerHTML = arrayContact.reduce(getCheckboxTable, '')
+}
 
 // tables listeners
 tableEdit.addEventListener('click', enableEdit)
@@ -128,3 +132,5 @@ tableDelete.addEventListener('click', checkboxHandler)
 // buttons listeners
 btnAddContact.addEventListener('click', addContact)
 btnSaveEdit.addEventListener('click', saveEdit)
+
+updateAllTables()
