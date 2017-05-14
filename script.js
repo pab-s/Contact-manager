@@ -17,10 +17,7 @@ const validEmail = /\S+@\S+\.\S+/
 const validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/
 const validName = /\D/
 
-// local storage setup
-var myStorage = localStorage
-
-let arrayContact = downloadContact(localStorage)
+let mainContactsArray = downloadContact(localStorage)
 let isCheckbox = true
 
 // object constructor
@@ -43,8 +40,8 @@ function addContact (e) {
   let inputEmail = formAddContact.elements[2].value
 
   if (validName.test(inputName) && validPhone.test(inputPhone) && validEmail.test(inputEmail)) {
-    arrayContact.push(new Contact(inputName, inputPhone, inputEmail))
-    updateContactStorage(arrayContact)
+    mainContactsArray.push(new Contact(inputName, inputPhone, inputEmail))
+    updateContactStorage(mainContactsArray)
     updateAllTables()
     resetInputValue()
     showModal('Done!', `The contact ${inputName} was added successfully`)
@@ -71,21 +68,26 @@ function resetInputValue () {
 
 function saveEdit (e) {
   e.preventDefault()
-  var tableRowData = tableEdit.querySelectorAll('tr')
+  let tableRowData = tableEdit.querySelectorAll('tr')
+  tableRowData = Array.from(tableRowData)
 
-  for (let i = 0; i < tableRowData.length; i++) {
-    console.log(tableRowData[i].cells[0].innerText)
-    console.log(tableRowData[i].cells[1].innerText)
-    console.log(tableRowData[i].cells[2].innerText)
-  }
-  // // TODO: update array and localStorage
+  let contactsArrayEdited = tableRowData.map((item) => {
+    return {
+      name: item.cells[0].innerText,
+      phone: item.cells[1].innerText,
+      email: item.cells[2].innerText
+    }
+  })
+  mainContactsArray = contactsArrayEdited
+  updateContactStorage(mainContactsArray)
+  updateAllTables()
 }
 
 // convert object contact to JSON string and storage it
 function updateContactStorage (arr) {
   localStorage.clear()
   arr.forEach((item, index) => {
-    myStorage.setItem(index, JSON.stringify(item))
+    localStorage.setItem(index, JSON.stringify(item))
   })
 }
 
@@ -100,11 +102,10 @@ function downloadContact (storage) {
 
 function getTableRowUser (obj, checkbox, index) {
   let row = '<tr>'
-  if (checkbox) row += '<td>' + '<input type="checkbox" value="' + index + '">' + '</td>'
-  row += '<td>' + obj['name'] + '</td>' +
-    '<td>' + obj['phone'] + '</td>' +
-    '<td>' + obj['email'] + '</td>' +
-    '</tr>'
+  if (checkbox) row += `<td> <input type="checkbox" value="${index}"> </td>`
+  row += `<td>${obj['name']}</td>
+          <td>${obj['phone']}</td>
+          <td>${obj['email']}</td></tr>`
   return row
 }
 
@@ -129,10 +130,10 @@ function getCheckboxTable (acc, user, index) {
 }
 
 function updateAllTables () {
-  let mainTable = arrayContact.reduce(getMainTable, '')
+  let mainTable = mainContactsArray.reduce(getMainTable, '')
   tableSearch.innerHTML = mainTable
   tableEdit.innerHTML = mainTable
-  tableDelete.innerHTML = arrayContact.reduce(getCheckboxTable, '')
+  tableDelete.innerHTML = mainContactsArray.reduce(getCheckboxTable, '')
 }
 
 // tables listeners
