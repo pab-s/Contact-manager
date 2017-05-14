@@ -5,6 +5,7 @@ let feedTitle = document.getElementById('feedback-title')
 // buttons
 var btnAddContact = document.getElementById('btnAdd')
 var btnSaveEdit = document.getElementById('btnSave')
+var btnDelete = document.getElementById('btnDelete')
 
 // tables
 var tableSearch = document.getElementById('tableSearch')
@@ -109,10 +110,16 @@ function getTableRowUser (obj, checkbox, index) {
   return row
 }
 
-function checkboxHandler (e) {
-  if (e.target.type === 'checkbox' && e.target.checked) {
-    console.log(e.target.value)
-  }
+function deleteContact (e) {
+  e.preventDefault()
+  let checkbox = tableDelete.querySelectorAll('input')
+  checkbox.forEach((item) => {
+    if (item.checked) {
+      delete mainContactsArray[item.value]
+    }
+  })
+  updateContactStorage(mainContactsArray)
+  updateAllTables()
 }
 
 function enableEdit (e) {
@@ -138,10 +145,11 @@ function updateAllTables () {
 
 // tables listeners
 tableEdit.addEventListener('click', enableEdit)
-tableDelete.addEventListener('click', checkboxHandler)
+// tableDelete.addEventListener('click', checkboxHandler)
 
 // buttons listeners
 btnAddContact.addEventListener('click', addContact)
 btnSaveEdit.addEventListener('click', saveEdit)
+btnDelete.addEventListener('click', deleteContact)
 
 updateAllTables()
