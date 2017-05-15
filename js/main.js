@@ -1,5 +1,4 @@
 /* global localStorage, $ */
-
 // tables
 let tableSearch = document.getElementById('tableSearch')
 let tableDelete = document.getElementById('tableDelete')
@@ -35,20 +34,21 @@ function addContact (e) {
   let inputName = formAddContact.elements[0].value
   let inputPhone = formAddContact.elements[1].value
   let inputEmail = formAddContact.elements[2].value
-
-  if (validName.test(inputName) && validPhone.test(inputPhone) && validEmail.test(inputEmail)) {
+  let message = ''
+  let title = 'Try again!'
+  // test input with regExp, if passes will create contact
+  if (!validName.test(inputName)) message += 'name is wrong <br>'
+  if (!validPhone.test(inputPhone)) message += 'phone is wrong <br>'
+  if (!validEmail.test(inputEmail)) message += 'email is wrong <br>'
+  if (message === '') {
+    title = 'Done!'
+    message = `The contact ${inputName} was added successfully`
     mainContactsArray.push(new Contact(inputName, inputPhone, inputEmail))
     updateContactStorage(mainContactsArray)
     updateAllTables()
     resetInputValue()
-    showModal('Done!', `The contact ${inputName} was added successfully`)
-  } else {
-    let message = ''
-    if (!validName.test(inputName)) message += 'name is wrong <br>'
-    if (!validPhone.test(inputPhone)) message += 'phone is wrong <br>'
-    if (!validEmail.test(inputEmail)) message += 'email is wrong <br>'
-    showModal('Try again!', message)
   }
+  showModal(title, message)
 }
 
 function showModal (title, body) {
@@ -67,7 +67,6 @@ function saveEdit (e) {
   e.preventDefault()
   let tableRowData = tableEdit.querySelectorAll('tr')
   tableRowData = Array.from(tableRowData)
-
   let contactsArrayEdited = tableRowData.map((item) => {
     return {
       name: item.cells[0].innerText,
@@ -139,9 +138,8 @@ function updateAllTables () {
   tableDelete.innerHTML = mainContactsArray.reduce(getCheckboxTable, '')
 }
 
-// tables listeners
+// edit table and buttons listeners
 tableEdit.addEventListener('click', enableEdit)
-// buttons listeners
 document.getElementById('btnAdd').addEventListener('click', addContact)
 document.getElementById('btnSave').addEventListener('click', saveEdit)
 document.getElementById('btnDelete').addEventListener('click', deleteContact)
