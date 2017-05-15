@@ -1,25 +1,21 @@
 /* global localStorage, $ */
-let feedback = document.getElementById('feedback')
-let feedTitle = document.getElementById('feedback-title')
-
-// buttons
-var btnAddContact = document.getElementById('btnAdd')
-var btnSaveEdit = document.getElementById('btnSave')
-var btnDelete = document.getElementById('btnDelete')
 
 // tables
-var tableSearch = document.getElementById('tableSearch')
-var tableDelete = document.getElementById('tableDelete')
-var tableEdit = document.getElementById('tableEdit')
+let tableSearch = document.getElementById('tableSearch')
+let tableDelete = document.getElementById('tableDelete')
+let tableEdit = document.getElementById('tableEdit')
 let formAddContact = document.querySelector('#section2 form')
+
+// modal
+let feedback = document.getElementById('feedback')
+let feedTitle = document.getElementById('feedback-title')
+let mainContactsArray = downloadContact(localStorage)
+let isCheckbox = true
 
 // regExp
 const validEmail = /\S+@\S+\.\S+/
-const validPhone = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/
+const validPhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
 const validName = /\D/
-
-let mainContactsArray = downloadContact(localStorage)
-let isCheckbox = true
 
 // object constructor
 function Contact (name, phone, email) {
@@ -27,9 +23,9 @@ function Contact (name, phone, email) {
   this.phone = phone
   this.email = email
   this.date = function () {
-    var userDate = new Date()
-    var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    var month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    let userDate = new Date()
+    let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    let month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     return days[userDate.getDay()] + ' ' + month[userDate.getMonth()] + ' ' + userDate.getFullYear()
   }
 };
@@ -47,7 +43,7 @@ function addContact (e) {
     resetInputValue()
     showModal('Done!', `The contact ${inputName} was added successfully`)
   } else {
-    var message = ''
+    let message = ''
     if (!validName.test(inputName)) message += 'name is wrong <br>'
     if (!validPhone.test(inputPhone)) message += 'phone is wrong <br>'
     if (!validEmail.test(inputEmail)) message += 'email is wrong <br>'
@@ -145,11 +141,9 @@ function updateAllTables () {
 
 // tables listeners
 tableEdit.addEventListener('click', enableEdit)
-// tableDelete.addEventListener('click', checkboxHandler)
-
 // buttons listeners
-btnAddContact.addEventListener('click', addContact)
-btnSaveEdit.addEventListener('click', saveEdit)
-btnDelete.addEventListener('click', deleteContact)
+document.getElementById('btnAdd').addEventListener('click', addContact)
+document.getElementById('btnSave').addEventListener('click', saveEdit)
+document.getElementById('btnDelete').addEventListener('click', deleteContact)
 
 updateAllTables()
