@@ -91,8 +91,8 @@ function updateContactStorage (arr) {
 function downloadContact (storage) {
   let arr = []
   if (storage.length !== 0) {
-    for (var item in storage) {
-      arr.push(JSON.parse(storage[item]))
+    for (var index = 0; index < storage.length; index++) {
+      arr.push(JSON.parse(storage.getItem(index)))
     }
 
   }
