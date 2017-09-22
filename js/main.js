@@ -90,8 +90,11 @@ function updateContactStorage (arr) {
 // gets users data from local storage and returns an array of objects
 function downloadContact (storage) {
   let arr = []
-  for (var item in storage) {
-    arr.push(JSON.parse(storage[item]))
+  if (storage.length !== 0) {
+    for (var item in storage) {
+      arr.push(JSON.parse(storage[item]))
+    }
+
   }
   return arr
 }
